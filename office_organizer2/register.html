@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>ТТК транстелеком - Регистрация</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #cd3b1d;
+            font-size: 64px;
+            margin-bottom: 0px;
+            text-align: center;
+            width: 100%;
+        }
+
+        h3 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 20px;
+            margin: 15px 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        form {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #000000;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        .requirements {
+            font-size: 0.8em;
+            color: #666;
+            
+            margin-top: 1px;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 20px;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    
+    <form id="registerForm">
+        <h1>TTK </h1>
+        <h3>транстелеком</h3>
+        <h2>Регистрация</h2>
+
+
+        <input type="text" name="login" placeholder="Логин" required>
+        <div class="requirements">*только латиница</div>
+
+        <input type="text" name="full_name" placeholder="ФИО" required>
+        <div class="requirements">*только кириллица</div>
+
+        <input type="password" name="password" placeholder="Пароль" required>
+
+
+        <input type="password" name="password_confirmation" placeholder="Повторите пароль" required>
+
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+    <p id="message"></p>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = {
+                login: this.login.value.trim(),
+                full_name: this.full_name.value.trim(),
+                password: this.password.value,
+                password_confirmation: this.password_confirmation.value
+            };
+
+            // Валидация полей
+            const cyrillicPattern = /^[а-яёА-ЯЁ\s]+$/;
+            const latinPattern = /^[a-zA-Z]+$/;
+            let isValid = true;
+            const messageEl = document.getElementById('message');
+
+            // Проверка логина
+            if (!latinPattern.test(formData.login)) {
+                messageEl.textContent = 'Логин должен содержать только латинские символы';
+                isValid = false;
+            }
+
+            // Проверка ФИО
+            else if (!cyrillicPattern.test(formData.full_name)) {
+                messageEl.textContent = 'ФИО должно содержать только кириллические символы';
+                isValid = false;
+            }
+
+            // Проверка паролей
+            else if (formData.password !== formData.password_confirmation) {
+                messageEl.textContent = 'Пароли не совпадают';
+                isValid = false;
+            }
+
+            // Проверка заполнения
+            else if (!Object.values(formData).every(Boolean)) {
+                messageEl.textContent = 'Все поля должны быть заполнены';
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Сохранение в localStorage (эмуляция БД)
+            const users = JSON.parse(localStorage.getItem('users') || []);
+
+            if (users.some(user => user.login === formData.login)) {
+                messageEl.textContent = 'Пользователь с таким логином уже существует';
+                return;
+            }
+
+            users.push(formData);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            messageEl.textContent = 'Регистрация успешно завершена!';
+            messageEl.style.color = 'green';
+            this.reset();
+            //вот тут заканчивается эмуляция бд
+        });
+    </script>
+</body>
+</html>
