@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Полезная информация</title>
+    <style>
+        /* Общие стили */
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            background-color: #f5f5f5;
+            flex-direction: column;
+        }
+
+        /* Стили для шапки */
+        .header-container {
+            background-color: #7e2d1b;
+            width: 100%;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .logo-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            height: 90px;
+            width: auto;
+            max-width: 200px;
+        }
+
+        .main-content {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+        .header1 {
+            font-size: 28px;
+            color: #2d3436;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .header {
+            font-size: 28px;
+            color: #2d3436;
+            margin-bottom: 30px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        /* Стили для шапки */
+        .header1 {
+            background-color: #7e2d1b;
+            width: 100%;
+            height: 80px;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* белеберда float */
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+
+        .articles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .article-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+            .article-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+            }
+
+        .article-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+
+        .article-content {
+            padding: 20px;
+        }
+
+        .article-title {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .article-meta {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 15px;
+        }
+
+        .add-article-btn {
+            width: 291px;
+            height: 63px;
+            background: #ffffff;
+            border: 2px dashed #b2bec3;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2d3436;
+            font-weight: 500;
+            margin: 30px auto;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+            .add-article-btn:hover {
+                border-color: #0984e3;
+                color: #0984e3;
+            }
+
+        /* Страница статьи */
+        #articlePage {
+            display: none;
+        }
+
+        .article-page {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .thumbnail-image {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            cursor: zoom-in;
+            border: 1px solid #eee;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .back-button {
+            padding: 12px 25px;
+            background: #7e2d1b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background 0.2s;
+            font-size: 16px;
+        }
+
+            .back-button:hover {
+                background: #0056b3;
+            }
+
+        /* Модальное окно для изображения */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 35px;
+            cursor: pointer;
+        }
+
+        /* Модальное окно для создания статьи */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 500px;
+            max-width: 90%;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        #articleContent {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .article-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .edit-btn, .delete-btn, .history-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .edit-btn {
+            background-color: #000000;
+            color: white;
+        }
+
+            .edit-btn:hover {
+                background-color: #e74c3c;
+            }
+
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+            .delete-btn:hover {
+                background-color: #7e2d1b;
+            }
+        .history-btn {
+            background-color: #7e2d1b;
+            color: white;
+        }
+            .history-btn:hover {
+                background-color: #000000;
+            }
+
+        .char-counter {
+            font-size: 12px;
+            color: #666;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+            .char-counter.warning {
+                color: #e74c3c;
+            }
+        /* Стили для истории изменений */
+        /*.history-btn {
+            background-color: #7e2d1b;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            margin-top: 15px;
+        }*/
+
+            .history-btn:hover {
+                background-color: #27ae60;
+            }
+
+        .history-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .history-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 600px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+        }
+
+            .history-item:last-child {
+                border-bottom: none;
+            }
+
+        .history-action {
+            font-weight: bold;
+            color: #7e2d1b;
+        }
+
+        .history-date {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .history-details {
+            margin-top: 5px;
+            font-size: 0.95em;
+        }
+
+        .close-history {
+            float: right;
+            cursor: pointer;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        /*кнопки разделов*/
+        
+       
+        .logo-container {
+            flex-shrink: 0; 
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 35px;
+            align-items: center;
+        }
+
+        .nav-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+        }
+
+            .nav-button:hover {
+                transform: translateY(-2px);
+                opacity: 0.9;
+            }
+
+        .button-icon {
+            width: 28px;
+            height: 28px;
+            margin-bottom: 5px;
+            filter: brightness(0) invert(1);
+        }
+
+        .nav-button span {
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    <!--шапочка-->
+    <div class="header-container">
+        <div class="logo-wrapper">
+            <header class="header clearfix">
+                <div class="logo-container">
+                    <img src="logo TTK.png" alt="Логотип сайта" class="logo">
+                </div>
+                <!-- Добавленные кнопки -->
+                <div class="header-buttons">
+                    <a href="articles.html" class="nav-button">
+                        <img src="VectorInfo.png" alt="Информация" class="button-icon">
+                        <span>Информация</span>
+                    </a>
+                    <a href="TaskTTK.html" class="nav-button">
+                        <img src="VectorTasks.png" alt="Задачи" class="button-icon">
+                        <span>Задачи</span>
+                    </a>
+                    <a href="adminTTK.html" class="nav-button">
+                        <img src="VectorAdmin.png" alt="Пользователи" class="button-icon">
+                        <span>Пользователи</span>
+                    </a>
+                </div>
+            </header>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">Полезная информация</div>
+
+        <div class="articles-container" id="articlesContainer"></div>
+
+        <div class="add-article-btn" onclick="showModal()">
+            Добавить статью
+        </div>
+
+        <!-- Страница статьи -->
+        <div id="articlePage">
+            <button class="back-button" onclick="goBackToArticles()">← Назад к статьям</button>
+            <div class="article-page">
+                <div id="imageContainer"></div>
+                <h2 id="fullArticleTitle"></h2>
+                <p id="fullArticleContent" style="white-space: pre-line;"></p>
+                <div class="article-meta" id="fullArticleMeta"></div>
+                <div class="article-actions" id="articleActions"></div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для редактирования статьи -->
+        <div class="modal-overlay" id="editModal">
+            <div class="modal-content">
+                <h2>Редактировать статью</h2>
+                <input type="text" id="editArticleTitle" class="modal-input" placeholder="Название статьи">
+                <textarea id="editArticleContent" class="modal-input" placeholder="Текст статьи" rows="4"></textarea>
+                <div class="char-counter" id="editCharCounter">0/800 символов</div>
+                <div style="margin: 15px 0;">
+                    <label for="editArticleImage">Новое изображение (оставьте пустым, чтобы сохранить текущее):</label>
+                    <input type="file" id="editArticleImage" class="modal-input" accept="image/*">
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <button onclick="closeEditModal()" style="background: #95a5a6; color: white; padding: 10px 25px; border: none; border-radius: 5px;">
+                        Отмена
+                    </button>
+                    <button onclick="confirmEditArticle()" style="background: #0984e3; color: white; padding: 10px 25px; border: none; border-radius: 5px;">
+                        Сохранить изменения
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для полноэкранного просмотра изображения -->
+        <div class="image-modal" id="imageModal">
+            <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
+            <img class="image-modal-content" id="modalImage">
+        </div>
+
+        <div class="history-modal" id="historyModal">
+            <div class="history-content">
+                <span class="close-history" onclick="closeHistoryModal()">&times;</span>
+                <h2>История изменений статьи</h2>
+                <div id="historyItems"></div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="modal">
+            <div class="modal-content">
+                <h2>Новая статья</h2>
+                <input type="text" id="articleTitle" class="modal-input" placeholder="Название статьи">
+                <textarea id="articleContent" class="modal-input" placeholder="Текст статьи" rows="4"></textarea>
+                <input type="file" id="articleImage" class="modal-input" accept="image/*">
+                <button onclick="saveArticle()" style="background: #7e2d1b; color: white; padding: 10px 25px; border: none; border-radius: 5px; float: right; margin-top: 15px;">
+                    Сохранить
+                    </button>
+            </div>
+        </div>
+        <!--изменение статейл алаллалала-->
+        <div class="modal-overlay" id="editModal">
+            <div class="modal-content">
+                <h2>Редактировать статью</h2>
+                <input type="text" id="editArticleTitle" class="modal-input" placeholder="Название статьи">
+                <textarea id="editArticleContent" class="modal-input" placeholder="Текст статьи" rows="4"></textarea>
+                <div class="char-counter" id="editCharCounter">0/800 символов</div>
+                <div style="margin: 15px 0;">
+                    <label for="editArticleImage">Новое изображение (оставьте пустым, чтобы сохранить текущее):</label>
+                    <input type="file" id="editArticleImage" class="modal-input" accept="image/*">
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <button onclick="closeEditModal()" style="background: #7e2d1b; color: white; padding: 10px 25px; border: none; border-radius: 5px;">
+                        Отмена
+                    </button>
+                    <button onclick="confirmEditArticle()" style="background: #7e2d1b; color: white; padding: 10px 25px; border: none; border-radius: 5px;">
+                        Сохранить изменения
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            // Инициализация хранилища
+            let articles = JSON.parse(localStorage.getItem('articles')) || [];
+
+            // Загрузка данных при старте
+            document.addEventListener('DOMContentLoaded', () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const articleIndex = urlParams.get('article');
+
+                if (articleIndex !== null) {
+                    showArticle(parseInt(articleIndex));
+                } else {
+                    renderArticles();
+                }
+            });
+
+            // Рендер списка статей
+            function renderArticles() {
+                const container = document.getElementById('articlesContainer');
+                container.innerHTML = '';
+
+                articles.forEach((article, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'article-card';
+                    card.innerHTML = `
+                                                                        ${article.image ? `<img src="${article.image}" class="article-image">` : ''}
+                                                                        <div class="article-content">
+                                                                            <div class="article-title">${article.title}</div>
+                                                                            <div class="article-meta">
+                                                                                ${article.author} · ${article.date}
+                                                                            </div>
+                                                                        </div>
+                                                                    `;
+                    card.onclick = () => showArticle(index);
+                    container.appendChild(card);
+                });
+            }
+
+            // Инициализация истории изменений
+            let articleHistory = JSON.parse(localStorage.getItem('articleHistory')) || [];
+
+            // Функция для записи в историю
+            function logHistory(action, articleId, details = {}) {
+                const entry = {
+                    id: Date.now(),
+                    action,
+                    articleId,
+                    timestamp: new Date().toISOString(),
+                    details,
+                    user: "Текущий пользователь" // Можно заменить на реальное имя пользователя
+                };
+
+                articleHistory.unshift(entry); // Добавляем в начало массива
+                localStorage.setItem('articleHistory', JSON.stringify(articleHistory));
+            }
+
+            // Показать статью
+            function showArticle(index) {
+                const article = articles[index];
+                if (!article) return;
+
+                currentArticleIndex = index;
+                history.pushState({ index }, ``, `?article=${index}`);
+
+                document.getElementById('articlesContainer').style.display = 'none';
+                document.querySelector('.add-article-btn').style.display = 'none';
+                document.getElementById('articlePage').style.display = 'block';
+
+                document.getElementById('fullArticleTitle').textContent = article.title;
+                document.getElementById('fullArticleContent').textContent = article.content;
+                document.getElementById('fullArticleMeta').innerHTML = `
+                                                            Автор: ${article.author}<br>
+                                                            Дата: ${article.date}
+                                                        `;
+
+                const imageContainer = document.getElementById('imageContainer');
+                imageContainer.innerHTML = '';
+
+                if (article.image) {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = article.image;
+                    imgElement.className = 'thumbnail-image';
+                    imgElement.alt = article.title;
+                    imgElement.onclick = () => openImageModal(article.image);
+                    imageContainer.appendChild(imgElement);
+                }
+
+                const actionsContainer = document.getElementById('articleActions');
+                actionsContainer.innerHTML = `
+                                                            <button class="edit-btn" onclick="showEditModal(${index})">Редактировать</button>
+                                                            <button class="delete-btn" onclick="deleteArticle(${index})">Удалить</button>
+                                                            <button class="history-btn" onclick="showArticleHistory(${index})">История</button>
+                                                        `;
+            }
+
+            // Показать историю статьи
+            function showArticleHistory(index) {
+                const article = articles[index];
+                if (!article) return;
+
+                const historyItems = document.getElementById('historyItems');
+                historyItems.innerHTML = '';
+
+                // Фильтруем историю по текущей статье
+                const filteredHistory = articleHistory.filter(entry => entry.articleId === index);
+
+                if (filteredHistory.length === 0) {
+                    historyItems.innerHTML = '<p>Нет записей в истории для этой статьи</p>';
+                } else {
+                    filteredHistory.forEach(entry => {
+                        const item = document.createElement('div');
+                        item.className = 'history-item';
+
+                        let details = '';
+                        if (entry.details.changes) {
+                            details = `Изменения: ${Object.entries(entry.details.changes)
+                                .map(([key, val]) => `${key}: ${val}`)
+                                .join(', ')}`;
+                        }
+
+                        item.innerHTML = `
+                                                                    <div class="history-action">${getActionText(entry.action)}</div>
+                                                                    <div class="history-date">${new Date(entry.timestamp).toLocaleString()}</div>
+                                                                    <div class="history-details">${details}</div>
+                                                                    <div class="history-user">Пользователь: ${entry.user}</div>
+                                                                `;
+                        historyItems.appendChild(item);
+                    });
+                }
+
+                document.getElementById('historyModal').style.display = 'flex';
+            }
+
+            // Закрыть модальное окно истории
+            function closeHistoryModal() {
+                document.getElementById('historyModal').style.display = 'none';
+            }
+
+            // Текстовое описание действия
+            function getActionText(action) {
+                const actions = {
+                    'create': 'Создание статьи',
+                    'edit': 'Редактирование статьи',
+                    'delete': 'Удаление статьи',
+                    'image_change': 'Изменение изображения'
+                };
+                return actions[action] || action;
+            }
+
+            // функция сохранения статьи
+            function saveArticle() {
+                const title = document.getElementById('articleTitle').value;
+                const content = document.getElementById('articleContent').value;
+                const imageFile = document.getElementById('articleImage').files[0];
+
+                if (!title || !content) {
+                    alert('Заполните обязательные поля!');
+                    return;
+                }
+
+                if (content.length > 800) {
+                    alert('Текст статьи не должен превышать 800 символов!');
+                    return;
+                }
+
+                if (imageFile) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const newArticle = {
+                            title,
+                            content,
+                            image: e.target.result,
+                            author: 'Имя Пользователя',
+                            date: new Date().toLocaleDateString('ru-RU'),
+                            created: new Date().toISOString()
+                        };
+
+                        articles.push(newArticle);
+                        localStorage.setItem('articles', JSON.stringify(articles));
+
+                        // Записываем в историю
+                        const articleId = articles.length - 1;
+                        logHistory('create', articleId, {
+                            title,
+                            contentLength: content.length,
+                            hasImage: true
+                        });
+
+                        renderArticles();
+                        closeModal();
+                    };
+                    reader.readAsDataURL(imageFile);
+                } else {
+                    const newArticle = {
+                        title,
+                        content,
+                        image: null,
+                        author: 'Имя Пользователя',
+                        date: new Date().toLocaleDateString('ru-RU'),
+                        created: new Date().toISOString()
+                    };
+
+                    articles.push(newArticle);
+                    localStorage.setItem('articles', JSON.stringify(articles));
+
+                    // Записываем в историю
+                    const articleId = articles.length - 1;
+                    logHistory('create', articleId, {
+                        title,
+                        contentLength: content.length,
+                        hasImage: false
+                    });
+
+                    renderArticles();
+                    closeModal();
+                }
+            }
+
+            //функция редактирования статьи
+            function confirmEditArticle() {
+                const title = document.getElementById('editArticleTitle').value;
+                const content = document.getElementById('editArticleContent').value;
+                const imageFile = document.getElementById('editArticleImage').files[0];
+
+                if (!title || !content) {
+                    alert('Заполните обязательные поля!');
+                    return;
+                }
+
+                if (content.length > 800) {
+                    alert('Текст статьи не должен превышать 800 символов!');
+                    return;
+                }
+
+                // Определяем изменения
+                const originalArticle = articles[currentArticleIndex];
+                const changes = {};
+
+                if (title !== originalArticle.title) changes.title = title;
+                if (content !== originalArticle.content) changes.contentLength = content.length;
+
+                if (imageFile) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        changes.hasImage = true;
+                        updateArticleData(title, content, e.target.result, changes);
+                    };
+                    reader.readAsDataURL(imageFile);
+                } else {
+                    changes.hasImage = originalArticle.image !== null;
+                    updateArticleData(title, content, originalArticle.image, changes);
+                }
+            }
+
+            // функция обновления данных статьи
+            function updateArticleData(title, content, image, changes = {}) {
+                const originalArticle = articles[currentArticleIndex];
+
+                articles[currentArticleIndex] = {
+                    ...originalArticle,
+                    title,
+                    content,
+                    image: image || null,
+                    date: new Date().toLocaleDateString('ru-RU') + ' (изменено)'
+                };
+
+                localStorage.setItem('articles', JSON.stringify(articles));
+
+                // Записываем в историю
+                logHistory('edit', currentArticleIndex, { changes });
+
+                showArticle(currentArticleIndex);
+                closeEditModal();
+            }
+
+            //  функция удаления статьи
+            function deleteArticle(index) {
+                if (confirm('Вы уверены, что хотите удалить эту статью?')) {
+                    const deletedArticle = articles[index];
+
+                    // Записываем в историю перед удалением
+                    logHistory('delete', index, {
+                        title: deletedArticle.title,
+                        contentLength: deletedArticle.content.length,
+                        hadImage: deletedArticle.image !== null
+                    });
+
+                    articles.splice(index, 1);
+                    localStorage.setItem('articles', JSON.stringify(articles));
+
+                    if (window.location.search.includes('article=')) {
+                        window.location.href = 'articles.html';
+                    } else {
+                        renderArticles();
+                    }
+                }
+            }
+            // Счетчик символов
+            function updateCharCounter() {
+                const content = document.getElementById('editArticleContent').value;
+                const counter = document.getElementById('editCharCounter');
+                counter.textContent = `${content.length}/800 символов`;
+
+                if (content.length > 800) {
+                    counter.classList.add('warning');
+                } else {
+                    counter.classList.remove('warning');
+                }
+            }
+
+            // Инициализация счетчика символов
+            document.getElementById('editArticleContent').addEventListener('input', updateCharCounter);
+
+
+            // Открыть модальное окно с изображением
+            function openImageModal(imageSrc) {
+                const modal = document.getElementById('imageModal');
+                const modalImg = document.getElementById('modalImage');
+                modal.style.display = 'flex';
+                modalImg.src = imageSrc;
+                document.body.style.overflow = 'hidden'; // Блокируем прокрутку страницы
+            }
+
+            // Закрыть модальное окно с изображением
+            function closeImageModal() {
+                document.getElementById('imageModal').style.display = 'none';
+                document.body.style.overflow = ''; // Восстанавливаем прокрутку
+            }
+
+            // Вернуться к списку статей
+            function goBackToArticles() {
+                document.getElementById('articlesContainer').style.display = 'grid';
+                document.querySelector('.add-article-btn').style.display = 'flex';
+                document.getElementById('articlePage').style.display = 'none';
+
+                // Обновляем URL
+                history.pushState(null, '', 'articles.html');
+            }
+
+            // Обработчик истории браузера
+            window.onpopstate = function (event) {
+                if (event.state?.index !== undefined) {
+                    showArticle(event.state.index);
+                } else {
+                    goBackToArticles();
+                }
+            };
+
+            // Работа с модальным окном создания статьи
+            function showModal() {
+                document.getElementById('modal').style.display = 'flex';
+                document.getElementById('articleTitle').value = '';
+                document.getElementById('articleContent').value = '';
+                document.getElementById('articleImage').value = '';
+            }
+
+            function closeModal() {
+                document.getElementById('modal').style.display = 'none';
+            }
+
+           
+            function createArticle(title, content, image) {
+                const newArticle = {
+                    title,
+                    content,
+                    image,
+                    author: 'Имя Пользователя',
+                    date: new Date().toLocaleDateString('ru-RU'),
+                    created: new Date().toISOString()
+                };
+
+                articles.push(newArticle);
+                localStorage.setItem('articles', JSON.stringify(articles));
+                renderArticles();
+                closeModal();
+            }
+
+
+            function saveArticleData(title, content, image) {
+                const newArticle = {
+                    title,
+                    content,
+                    image,
+                    author: 'Имя Пользователя',
+                    date: new Date().toLocaleDateString('ru-RU'),
+                    created: new Date().toISOString()
+                };
+
+                articles.push(newArticle);
+                localStorage.setItem('articles', JSON.stringify(articles));
+                renderArticles();
+                closeModal();
+            }
+            let currentArticleIndex = null;
+
+            function showEditModal(index) {
+                const article = articles[index];
+                currentArticleIndex = index;
+
+                document.getElementById('editArticleTitle').value = article.title;
+                document.getElementById('editArticleContent').value = article.content;
+                document.getElementById('editArticleImage').value = '';
+                updateCharCounter();
+
+                document.getElementById('editModal').style.display = 'flex';
+            }
+
+            function closeEditModal() {
+                document.getElementById('editModal').style.display = 'none';
+            }
+
+            function updateCharCounter() {
+                const content = document.getElementById('editArticleContent').value;
+                const counter = document.getElementById('editCharCounter');
+                counter.textContent = `${content.length}/800 символов`;
+
+                if (content.length > 800) {
+                    counter.classList.add('warning');
+                } else {
+                    counter.classList.remove('warning');
+                }
+            }
+
+            // Закрытие модальных окон при клике вне области
+            document.getElementById('editArticleContent').addEventListener('input', updateCharCounter);
+
+            document.getElementById('modal').addEventListener('click', function (e) {
+                if (e.target === this) closeModal();
+            });
+
+            document.getElementById('imageModal').addEventListener('click', function (e) {
+                if (e.target === this) closeImageModal();
+            });
+        </script>
+</body>
+</html>

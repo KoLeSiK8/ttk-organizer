@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Администрирование</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .header-container {
+            background-color: #7e2d1b;
+            width: 100%;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .nav-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 40px;
+        }
+
+        .logo {
+            height: 90px;
+            width: auto;
+            max-width: 200px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 30px;
+            flex-grow: 1;
+            justify-content: flex-end;
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            transition: opacity 0.2s;
+        }
+
+            .nav-button:hover {
+                opacity: 0.8;
+            }
+
+        .button-icon {
+            height: 24px;
+            width: 24px;
+        }
+
+        .admin-btn {
+            width: 291px;
+            height: 63px;
+            background: #ffffff;
+            border: 2px dashed #9b59b6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9b59b6;
+            font-weight: 500;
+            margin: 30px auto;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .admin-panel {
+            display: none;
+            margin: 30px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 1200px;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+            .users-table th, .users-table td {
+                border: 1px solid #ddd;
+                padding: 12px;
+                text-align: left;
+            }
+
+            .users-table th {
+                background-color: #f2f2f2;
+            }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            margin-right: 5px;
+            color: white;
+        }
+
+        .edit-btn {
+            background-color: #7e2d1b;
+            color: white;
+        }
+
+            .edit-btn:hover {
+                background-color: #7e2d1b;
+            }
+
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+            .delete-btn:hover {
+                background-color: #c0392b;
+            }
+
+        .filters {
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .filters input, .filters select {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            padding: 8px;
+        }
+
+        .filters label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <div class="header-container">
+        <div class="nav-wrapper">
+            <img src="logo TTK.png" alt="Логотип" class="logo">
+            <div class="nav-buttons">
+                <a href="articles.html" class="nav-button">
+                    <img src="VectorInfo.png" alt="Информация" class="button-icon">
+                    <span>Информация</span>
+                </a>
+                <a href="TaskTTK.html" class="nav-button">
+                    <img src="VectorTasks.png" alt="Задачи" class="button-icon">
+                    <span>Задачи</span>
+                </a>
+                <a href="adminTTK.html" class="nav-button">
+                    <img src="VectorAdmin.png" alt="Пользователи" class="button-icon">
+                    <span>Пользователи</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="admin-btn" onclick="showAdminLogin()">
+        Режим администратора
+    </div>
+
+    <!-- Панель администратора -->
+    <div class="admin-panel" id="adminPanel">
+        <h2>Панель администратора</h2>
+        <button onclick="generateTestUsers()" class="action-btn" style="background:#cd3b1d; margin-right:10px; color:white;">
+            Сгенерировать тестовых пользователей
+        </button>
+        <button onclick="showAllUsers()" class="action-btn" style="background:#7e2d1b; color:white;">
+            Обновить список
+        </button>
+        
+        <!-- Блок фильтрации -->
+        <div class="filters">
+            <h3>Фильтрация пользователей</h3>
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="filterLogin">По логину:</label>
+                    <input type="text" id="filterLogin" placeholder="Введите логин">
+                </div>
+                <div class="filter-group">
+                    <label for="filterName">По ФИО:</label>
+                    <input type="text" id="filterName" placeholder="Введите часть ФИО">
+                </div>
+                <div class="filter-group">
+                    <label for="filterRole">По роли:</label>
+                    <select id="filterRole">
+                        <option value="">Все</option>
+                        <option value="admin">Администратор</option>
+                        <option value="user">Пользователь</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <button onclick="applyFilters()" class="action-btn" style="background: #7e2d1b; width: 100%; color:white;">Применить</button>
+                </div>
+                <div class="filter-group">
+                    <button onclick="resetFilters()" class="action-btn" style="background: #111111; width: 100%; color:white;">Сбросить</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="usersListContainer" style="margin-top:20px;"></div>
+    </div>
+
+    <script>
+        const HARDCODED_ADMIN = { login: 'admin', password: 'admin', role: 'admin', full_name: 'Главный администратор' };
+        let currentAdmin = null;
+
+        function generatePassword(length = 8) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            return Array.from({ length }, () =>
+                chars[Math.floor(Math.random() * chars.length)]
+            ).join('');
+        }
+
+        // Генерация тестовых данных
+        function generateTestUsers() {
+            const users = [];
+            const firstNames = ['Иван', 'Мария', 'Алексей', 'Ольга', 'Дмитрий'];
+            const lastNames = ['Петров', 'Сидорова', 'Иванов', 'Смирнова', 'Кузнецов'];
+            const roles = ['admin', 'user'];
+
+            // Добавляем тестовых пользователей
+            for (let i = 0; i < 8; i++) {
+                users.push({
+                    login: `user${i + 1}`,
+                    password: generatePassword(),
+                    full_name: `${lastNames[Math.floor(Math.random() * lastNames.length)]} ${firstNames[Math.floor(Math.random() * firstNames.length)]} ${firstNames[Math.floor(Math.random() * firstNames.length)]}вич`.replace(/\s+/g, ' '),
+                    role: roles[Math.floor(Math.random() * roles.length)],
+                    createdAt: new Date(Date.now() - Math.floor(Math.random() * 1000000000))
+                });
+            }
+
+            localStorage.setItem('users', JSON.stringify(users));
+            showAllUsers();
+            alert('Сгенерировано 8 тестовых пользователей!');
+        }
+
+        function showAdminLogin() {
+            const login = prompt('Введите логин:');
+            const password = prompt('Введите пароль:');
+
+            // Проверка жестко заданного администратора
+            if (login === HARDCODED_ADMIN.login && password === HARDCODED_ADMIN.password) {
+                currentAdmin = HARDCODED_ADMIN;
+                document.getElementById('adminPanel').style.display = 'block';
+                showAllUsers();
+                alert(`Добро пожаловать, ${HARDCODED_ADMIN.full_name}!`);
+                return;
+            }
+
+            // Проверка пользователей из localStorage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.login === login && u.password === password);
+
+            if (user) {
+                if (user.role === 'admin') {
+                    currentAdmin = user;
+                    document.getElementById('adminPanel').style.display = 'block';
+                    showAllUsers();
+                    alert(`Добро пожаловать, ${user.full_name}!`);
+                } else {
+                    alert('У вас нет прав администратора!');
+                }
+            } else {
+                alert('Неверные учетные данные!');
+            }
+        }
+
+        // Функция фильтрации пользователей
+        function applyFilters() {
+            const loginFilter = document.getElementById('filterLogin').value.toLowerCase();
+            const nameFilter = document.getElementById('filterName').value.toLowerCase();
+            const roleFilter = document.getElementById('filterRole').value;
+            
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const filteredUsers = users.filter(user => {
+                const matchesLogin = user.login.toLowerCase().includes(loginFilter);
+                const matchesName = user.full_name.toLowerCase().includes(nameFilter);
+                const matchesRole = !roleFilter || user.role === roleFilter;
+                
+                return matchesLogin && matchesName && matchesRole;
+            });
+            
+            renderUsersTable(filteredUsers);
+        }
+
+        // Функция сброса фильтров
+        function resetFilters() {
+            document.getElementById('filterLogin').value = '';
+            document.getElementById('filterName').value = '';
+            document.getElementById('filterRole').value = '';
+            showAllUsers();
+        }
+
+        // Функция отрисовки таблицы пользователей
+        function renderUsersTable(users) {
+            const container = document.getElementById('usersListContainer');
+
+            if (users.length === 0) {
+                container.innerHTML = '<p>Пользователи не найдены</p>';
+                return;
+            }
+
+            let tableHTML = `
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Логин</th>
+                            <th>ФИО</th>
+                            <th>Пароль</th>
+                            <th>Роль</th>
+                            <th>Дата регистрации</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            users.forEach((user, index) => {
+                tableHTML += `
+                    <tr id="user-row-${index}">
+                        <td>${user.login}</td>
+                        <td>${user.full_name}</td>
+                        <td>••••••</td>
+                        <td>${user.role}</td>
+                        <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString('ru-RU') : 'Н/Д'}</td>
+                        <td>
+                            <button class="action-btn edit-btn" onclick="startEditUser(${index})">Ред</button>
+                            <button class="action-btn delete-btn" onclick="deleteUser(${index})">Удл</button>
+                        </td>
+                    </tr>`;
+            });
+
+            tableHTML += `</tbody></table>`;
+            container.innerHTML = tableHTML;
+        }
+
+        function showAllUsers() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            renderUsersTable(users);
+        }
+
+        function startEditUser(index) {
+            // Проверяем, что текущий пользователь - администратор
+            if (!currentAdmin || currentAdmin.role !== 'admin') {
+                alert('Только администратор может редактировать пользователей!');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users'));
+            const user = users[index];
+
+            // Не позволяем редактировать жестко заданного администратора
+            if (user.login === HARDCODED_ADMIN.login) {
+                alert('Этот администратор не может быть отредактирован!');
+                return;
+            }
+
+            const row = document.getElementById(`user-row-${index}`);
+            row.innerHTML = `
+                <td><input type="text" value="${user.login}" style="width:90%"></td>
+                <td><input type="text" value="${user.full_name}" style="width:90%"></td>
+                <td><input type="password" value="${user.password}" style="width:90%"></td>
+                <td>
+                    <select style="width:100%; padding:5px">
+                        <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>admin</option>
+                        <option value="user" ${user.role === 'user' ? 'selected' : ''}>user</option>
+                    </select>
+                </td>
+                <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString('ru-RU') : 'Н/Д'}</td>
+                <td>
+                    <button class="action-btn" style="background:#2ecc71; color:white;" onclick="saveUser(${index})">✓</button>
+                    <button class="action-btn" style="background:#95a5a6; color:white;" onclick="showAllUsers()">✕</button>
+                </td>`;
+        }
+
+        function saveUser(index) {
+            const users = JSON.parse(localStorage.getItem('users'));
+            const row = document.getElementById(`user-row-${index}`);
+            const inputs = row.querySelectorAll('input, select');
+
+            users[index] = {
+                ...users[index],
+                login: inputs[0].value,
+                full_name: inputs[1].value,
+                password: inputs[2].value,
+                role: inputs[3].value
+            };
+
+            localStorage.setItem('users', JSON.stringify(users));
+            showAllUsers();
+        }
+
+        function deleteUser(index) {
+            if (!currentAdmin || currentAdmin.role !== 'admin') {
+                alert('Только администратор может удалять пользователей!');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users'));
+            const userToDelete = users[index];
+
+            // Не позволяем удалить жестко заданного администратора
+            if (userToDelete.login === HARDCODED_ADMIN.login) {
+                alert('Этот администратор не может быть удален!');
+                return;
+            }
+
+            if (confirm('Удалить пользователя?')) {
+                users.splice(index, 1);
+                localStorage.setItem('users', JSON.stringify(users));
+                showAllUsers();
+            }
+        }
+
+        // Инициализация при первой загрузке
+        if (!localStorage.getItem('users')) {
+            generateTestUsers();
+        }
+    </script>
+</body>
+</html>

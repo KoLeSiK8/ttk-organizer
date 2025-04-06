@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>TTK транстелеком - Вход</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #cd3b1d;
+            font-size: 64px;
+            margin-bottom: 0px;
+            text-align: center;
+            width: 100%;
+        }
+
+        h3 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 20px;
+            margin: 15px 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #000000; 
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+
+        .registration-link {
+            text-align: center;
+            margin: 15px 0;
+            color: #666;
+        }
+
+            .registration-link a {
+                color: #cd3b1d;
+                text-decoration: none;
+            }
+
+                .registration-link a:hover {
+                    text-decoration: underline;
+                }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TTK </h1>
+        <h3>транстелеком</h3> 
+        <h2>Вход</h2>
+        <form id="loginForm">
+            <input type="text" name="login" placeholder="Логин" required>
+            <input type="password" name="password" placeholder="Пароль" required>
+            <button type="submit">Войти</button>
+
+            
+            <div class="registration-link">
+                Или перейдите к <a href="register.html">регистрации</a>
+            </div>
+        </form>
+        <p id="message"></p>
+        
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+    
+            const login = this.login.value.trim();
+            const password = this.password.value.trim();
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = '';
+            messageEl.style.color = '#dc3545'; // Красный цвет по умолчанию для ошибок
+    
+            // Проверка заполнения полей
+            if (!login || !password) {
+                messageEl.textContent = 'Заполните все поля!';
+                return;
+            }
+    
+            // Получаем зарегистрированных пользователей из localStorage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+    
+            // Ищем пользователя с введённым логином
+            const user = users.find(u => u.login === login);
+    
+            if (!user) {
+                messageEl.textContent = 'Пользователь не найден!';
+                return;
+            }
+    
+            // Проверяем пароль
+            if (user.password !== password) {
+                messageEl.textContent = 'Неверный пароль!';
+                return;
+            }
+    
+            // Успешный вход
+            messageEl.style.color = 'green';
+            messageEl.textContent = 'Успешный вход! Перенаправление...';
+    
+            // Редирект на защищённую страницу (например, account.html)
+            setTimeout(() => {
+                window.location.href = 'articles.html'; // Замените на нужный URL
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
